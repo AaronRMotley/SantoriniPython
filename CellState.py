@@ -1,3 +1,4 @@
+import Worker
 
 class Cell:
     def __init__(self, perimeter = False):
@@ -6,6 +7,7 @@ class Cell:
         self.dome = False
         self.perimeter = perimeter
         self.workerid = 0
+        
     
     def build(self):
         if self.level < 4:

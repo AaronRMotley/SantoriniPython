@@ -1,17 +1,25 @@
 
-import CellState
-
 win, nowin = 1, 0
 
 class Worker:
-    def __init__(self, id, player, row, column):
-          self.player = player
-          #Worker ID = 0 is null. ID >1 is real
-          self.id = id
-          self.moved = False
-          self.ascended = False
-          self.level = 0
-
+    def __init__(self):
+        self.player = 0
+        self.id = 0
+        self.color = ''
+        self.moved = False
+        self.ascended = False
+        self.level = 0
+    
+    def assignPlayer(self, player, id):
+        self.player = player
+        self.id = id
+        if player == 1:
+            self.color = "R"
+        elif player == 2:
+            self.color = "B"
+        else:
+            self.color = "G"
+        
     def move(self, newlevel):
         self.moved = True
         if newlevel-self.level == 1:
@@ -31,3 +39,5 @@ class Worker:
             #Error
             pass
         return nowin
+
+        
