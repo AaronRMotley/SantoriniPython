@@ -6,9 +6,7 @@ class Cell:
         self.occupied = False
         self.dome = False
         self.perimeter = perimeter
-        self.workerid = 0
         
-    
     def build(self):
         if self.level < 4:
             self.level += 1
@@ -19,8 +17,8 @@ class Cell:
         if self.level > 0 and self.dome != True:
             self.level -= 1
     
-    def getvariablestoprint(self):
-        return ["level", self.level, "occupied", self.occupied, "dome", self.dome, "perimeter", self.perimeter, "workerid", self.workerid]
+    def print_pretty(self):
+        return ["level", self.level, "occupied", self.occupied, "dome", self.dome, "perimeter", self.perimeter]
     
-    def getvariables(self):
-        return [self.level, self.occupied, self.dome, self.perimeter, self.workerid]
+    def print_simple(self):
+        return [self.level, self.occupied, self.dome, self.perimeter]

@@ -1,11 +1,11 @@
 import CellState as cells
-import Worker as work
+import Worker as worker
+import Player as player
 
 #BoardPieces
 levelone,leveltwo,levelthree,domes = 22,18,14,18
 #Other stats
 boardsize = 5
-playerpiecesmax, playercount = 2, 2
 printspacing = 5
 
 class BoardManager:
@@ -14,21 +14,26 @@ class BoardManager:
         self.board = []
         count = boardsize
         while count > 0:
-            self.board.append([(cells.Cell(), work.Worker()) for n in range(boardsize)])
+            self.board.append([(cells.Cell(), '') for n in range(boardsize)])
             count -= 1
         for r in range(len(self.board)):
             for c in range(len(self.board)):
                 if r == 0 or r == (boardsize-1) or c == 0 or c == (boardsize-1):
                     self.board[c][r][0].perimeter = True
-        self.workers = []
-
-    def addworker(self, player):
+    
+    def add_worker(self, player, row, column):
         pass
 
-    def moveworker(self, workerid):
+    def valid_moves(self, player):
+        pass
+
+    def move_worker(self, worker, row, column):
         pass
     
-    def printboard(self):
+    def endturn(self):
+        pass
+    
+    def print_board(self):
         #header = (" "*(printspacing+1)).join([" ", "A", "B", "C", "D", "E"])
         row, s = 1, (" "*(printspacing+1)).join([" ", "A", "B", "C", "D", "E"])
         for r in self.board:
@@ -36,13 +41,9 @@ class BoardManager:
             for c in r:
                 s += "L"+str(c[0].level)
                 if c[0].occupied == True:
-                    s+= "-"+str(c[0].workerboardprint())+(" "*(printspacing-2))
+                    s+= "-"+str(c[1].player) + str(c[1].id) +(" "*(printspacing-2))
                 else:
                     s += (" "*printspacing)
             #s += '\n'
             row += 1
         return s
-
-
-    
-
