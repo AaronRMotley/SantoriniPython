@@ -22,15 +22,19 @@ class BoardManager:
                     self.board[c][r][0].perimeter = True
     
     def add_worker(self, player, row, column):
+        #TODO
         pass
 
     def valid_moves(self, player):
+        #TODO
         pass
 
     def move_worker(self, worker, row, column):
+        #TODO
         pass
     
     def endturn(self):
+        #TODO
         pass
     
     def print_board(self):
@@ -41,7 +45,9 @@ class BoardManager:
             for c in r:
                 s += "L"+str(c[0].level)
                 if c[0].occupied == True:
-                    s+= "-"+str(c[1].player) + str(c[1].id) +(" "*(printspacing-2))
+                    #TODO Write new login
+                    pass
+                    #s+= "-"+str(c[1].player) + str(c[1].id) +(" "*(printspacing-2))
                 else:
                     s += (" "*printspacing)
             #s += '\n'

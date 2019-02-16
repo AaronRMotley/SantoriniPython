@@ -10,5 +10,13 @@ print(main.print_board())
 
 
 
+#               Main.py
+#             /         \
+#       Board ---------- Player  ---- God
+#        /              /
+#     Cell             /
+#                     /
+#                Worker
+
 #this is a new line to test git
 #add pieces
