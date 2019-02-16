@@ -1,14 +1,14 @@
-import tkinter as tk
-import numpy as np
-import Worker as w
+#import tkinter as tk
+import Worker as worker
 import CellState as cells
 import Board as b
+import Player as Player
 
+player_worker_max, player_count = 2, 2
 main = b.BoardManager()
-print(main.printboard())
+print(main.print_board())
 
-for c in main.board:
-    print(c)
+
 
 #this is a new line to test git
 #add pieces
