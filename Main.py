@@ -6,8 +6,7 @@ import Player as Player
 
 player_worker_max, player_count = 2, 2
 main = b.BoardManager()
-print(main.print_board())
-
+print(main)
 
 
 #               Main.py
@@ -17,6 +16,3 @@ print(main.print_board())
 #     Cell             /
 #                     /
 #                Worker
-
-#this is a new line to test git
-#add pieces

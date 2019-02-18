@@ -2,14 +2,13 @@ import CellState as cells
 import Worker as worker
 import Player as player
 
-#BoardPieces
-levelone,leveltwo,levelthree,domes = 22,18,14,18
-#Other stats
-boardsize = 5
-printspacing = 5
+# BoardPieces
+LEVELONE,LEVELTWO,LEVELTHREE,DOMES = 22,18,14,18
+# Other stats
+PRINTSPACING = 5
 
 class BoardManager:
-    def __init__(self):
+    def __init__(self, boardsize = 5):
         #board = [[CellState.Cell()] * boardsize] * boardsize -- This is wrong - makes pointers to existing cell objects
         self.board = []
         count = boardsize
@@ -37,19 +36,19 @@ class BoardManager:
         #TODO
         pass
     
-    def print_board(self):
-        #header = (" "*(printspacing+1)).join([" ", "A", "B", "C", "D", "E"])
-        row, s = 1, (" "*(printspacing+1)).join([" ", "A", "B", "C", "D", "E"])
+    def __str__(self):
+        #header = (" "*(PRINTSPACING+1)).join([" ", "A", "B", "C", "D", "E"])
+        row, s = 1, (" "*(PRINTSPACING+1)).join([" ", "A", "B", "C", "D", "E"])
         for r in self.board:
-            s += '\n'+str(row)+(" "*printspacing)
+            s += '\n'+str(row)+(" "*PRINTSPACING)
             for c in r:
                 s += "L"+str(c[0].level)
                 if c[0].occupied == True:
                     #TODO Write new login
                     pass
-                    #s+= "-"+str(c[1].player) + str(c[1].id) +(" "*(printspacing-2))
+                    #s+= "-"+str(c[1].player) + str(c[1].id) +(" "*(PRINTSPACING-2))
                 else:
-                    s += (" "*printspacing)
+                    s += (" "*PRINTSPACING)
             #s += '\n'
             row += 1
         return s
