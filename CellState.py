@@ -1,4 +1,4 @@
-import Worker
+import Worker as wk
 
 class Cell:
     def __init__(self, perimeter = False):
