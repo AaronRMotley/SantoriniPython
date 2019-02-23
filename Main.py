@@ -4,14 +4,13 @@ import Board as bd
 PLAYER_COUNT, WORKER_COUNT = 2, 2
 PLAYER1, PLAYER2, PLAYER3 = 'R', 'G', 'B'
 
-board = bd.BoardManager(board_size=5)
-board.add_worker(PLAYER1, 1, 1)
-board.add_worker(PLAYER2, 2, 3)
+cur_player = PLAYER1
 
-print(board)
-board.move_worker(PLAYER1, 1, 1, 2, 1)
-print(board)
-
+main = bd.BoardManager()
+main.add_worker(cur_player, 5, 5)
+main.add_worker(cur_player, 1, 1)
+print(main)
+print(main.valid_moves(cur_player))
 
 
 # Setup

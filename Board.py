@@ -15,6 +15,7 @@ class BoardManager:
             for c in range(ends):
                 if r == 0 or r == (ends) or c == 0 or c == (ends):
                     self.board[r][c]['perimeter'] = True
+        
 
     def add_worker(self, player, row, column):
         if row < 1 or row > 5 or column < 0 or column > 5:
@@ -23,7 +24,27 @@ class BoardManager:
             self.board[row-1][column-1]['worker'] = {'moved': False, 'ascended': False, 'player': player}
         else:
             return "Space is occupied"
-             
+
+    def valid_moves(self, player):
+        valid_moves = []
+        row = 0
+        for r in self.board:
+            col = 0
+            for c in r:
+                if 'worker' in c:
+                    if c['worker']['player'] == player:
+                        for test_row in range(row-1, row+2):
+                            for test_col in range(col-1, col+2):
+                                if test_row < len(self.board) and test_col < len(self.board) \
+                                and test_row >= 0 and test_col >= 0 \
+                                and self.board[test_row][test_col]['dome'] != True \
+                                and self.board[test_row][test_col]['level'] <= self.board[row][col]['level'] \
+                                and not (row == test_row and col == test_col):
+                                    valid_moves.append((test_row+1, test_col+1))
+                col += 1
+            row += 1
+        return valid_moves
+
     def move_worker(self, player, old_row, old_col, new_row, new_col):
         if 'worker' in self.board[old_row-1][old_col-1] and 'worker' not in self.board[new_row-1][new_col-1] \
               and player == self.board[old_row-1][old_col-1]['worker']['player']:
