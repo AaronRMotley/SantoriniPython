@@ -1,33 +1,19 @@
 # import tkinter as tk
 import Board as bd
-import Player as pl
 
-PLAYER_COUNT = 2
+PLAYER_COUNT, WORKER_COUNT = 2, 2
+PLAYER1, PLAYER2, PLAYER3 = 'R', 'G', 'B'
 
-main = bd.BoardManager()
+board = bd.BoardManager(board_size=5)
+board.add_worker(PLAYER1, 1, 1)
+board.add_worker(PLAYER2, 2, 3)
 
-player1 = pl.Player("G")
-player2 = pl.Player("R")
-
-main.add_worker(player1.workers[0], 1, 1)
-main.add_worker(player1.workers[1], 3, 5)
-main.add_worker(player2.workers[0], 2, 2)
-main.add_worker(player2.workers[1], 5, 5)
-
-# TODO check valid moves for a players
+print(board)
+board.move_worker(PLAYER1, 1, 1, 2, 1)
+print(board)
 
 
-print(main)
 
-
-#               Main.py
-#             /         \
-#       Board <-------- Player <---- God
-#        /              /
-#     Cell             /
-#                     /
-#                Worker
-#
 # Setup
 # 1) Select Number of Players
 # 2) Setup Players (and select God by random or choice)
