@@ -1,21 +1,21 @@
-# BoardPieces Max
+# BoardPieces Statics
+BOARD_SIZE = 5
 LEVEL_ONE, LEVEL_TWO, LEVEL_THREE, DOMES = 22, 18, 14, 18
 # Other stats for Printing
 PRINT_SPACING = 5
 HEADER = [" ", "A", "B", "C", "D", "E"]
-
 # Example Board cell dictionary
 # {'level': 0, 'dome': False, 'perimeter': False, 'worker': {'moved': False, 'ascended': False, 'player': 'R'}}
 
 class BoardManager:
-    def __init__(self, board_size=5):
-        ends = board_size-1
-        self.board = [[{'level': 0, 'dome': False, 'perimeter': False} for n in range(board_size)] for x in range(board_size)]
+    def __init__(self):
+        self.BOARD_SIZE = BOARD_SIZE
+        ends = self.BOARD_SIZE-1
+        self.board = [[{'level': 0, 'dome': False, 'perimeter': False} for n in range(BOARD_SIZE)] for x in range(BOARD_SIZE)]
         for r in range(ends):
             for c in range(ends):
                 if r == 0 or r == (ends) or c == 0 or c == (ends):
                     self.board[r][c]['perimeter'] = True
-        
 
     def add_worker(self, player, row, column):
         if row < 1 or row > 5 or column < 0 or column > 5:
@@ -67,7 +67,7 @@ class BoardManager:
                 else:
                     s += "L"+str(c['level'])
                 if 'worker' in c:
-                    s += "-" + str(c['worker']['player']) + (" "*(PRINT_SPACING-2))
+                    s += "-" + str(c['worker']['player']['color']) + (" "*(PRINT_SPACING-2))
                 else:
                     s += (" "*PRINT_SPACING)
             row += 1
