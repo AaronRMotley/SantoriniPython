@@ -22,18 +22,26 @@ def InputPlayerCount(prompt = "How many players? (2-4)"):
             break
     return value
 
-def InputWorkerPlace(board, prompt = "Select an empty row and column to place a worker: "):
+def InputWorkerPlace(main, current_player, prompt = "Select an empty row and column to place a worker: "):
     while True:
         value = SanitizeRowColInputs(prompt)
-        if 'worker' in board[value[0]-1][value[1]-1]:
+        if 'worker' in main.board[value[0]-1][value[1]-1]:
             print(f'Worker already in space {value[0]}{COL_TRANSLATION_TO_STR[value[1]]}')
             continue
         else:
+            main.add_worker(current_player, value[0], value[1])
             break
     return value
 
-def InputWorkerMove(board, prompt = "Select a worker to move:"):
-    pass
+def InputWorkerMove(main, player, prompt = "Select a worker to move: "):
+    while True:
+        selected = SanitizeRowColInputs(prompt)
+        destination = SanitizeRowColInputs("Select a location to move to: ")
+        if 'worker' in main.board[selected[0]][selected[1]] and player == main.board[selected[0]][selected[1]]['worker']['player']:
+            main.move_worker(player, selected[0], selected[1], destination[0], destination[1])
+        else: 
+            print("not valid")
+            continue
 
 def SanitizeRowColInputs(prompt, basic_fail = "Input is not valid. Example Valid input: 1A"):
     while True:
@@ -49,17 +57,9 @@ def SanitizeRowColInputs(prompt, basic_fail = "Input is not valid. Example Valid
                 continue
             else:
                 value[1] = COL_TRANSLATION_TO_NUM[value[1]]
+                break
 
         except ValueError:
             print(basic_fail)
             continue
     return value
-
-def ClearScreen():
-    # for windows 
-    if name == 'nt': 
-        _ = system('cls') 
-  
-    # for mac and linux(here, os.name is 'posix') 
-    else: 
-        _ = system('clear') 
