@@ -37,7 +37,7 @@ def InputWorkerMove(main, player, prompt = "Select a worker to move: "):
     while True:
         selected = SanitizeRowColInputs(prompt)
         destination = SanitizeRowColInputs("Select a location to move to: ")
-        if 'worker' in main.board[selected[0]][selected[1]] and player == main.board[selected[0]][selected[1]]['worker']['player']:
+        if destination in main.valid_moves(player):
             main.move_worker(player, selected[0], selected[1], destination[0], destination[1])
         else: 
             print("not valid")

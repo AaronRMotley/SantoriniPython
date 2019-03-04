@@ -11,18 +11,14 @@ PLAYER_LIST = [PLAYER1, PLAYER2, PLAYER3, PLAYER4]
 WORKER_COUNT = 2
 
 no_winner = True
-players_turn = 0
+player_turn = 0
 
-# cur_player = PLAYER1
-# main = bd.BoardManager()
-# main.add_worker(cur_player, 5, 5)
-# main.add_worker(cur_player, 1, 1)
-# print(main)
-# moves = main.valid_moves(cur_player)
-
+# 2 and 3 player games are solo, but 4 player games have 2 teams
 player_count = iv.InputPlayerCount()
 main = bd.BoardManager()
 
+# Each player (in order) plays their 2 piececs on the board, then the next player,
+# until all players have placed their 2 workers
 players_placed = 0
 while players_placed < player_count:
     current_player = PLAYER_LIST[players_placed]
@@ -30,8 +26,8 @@ while players_placed < player_count:
     while work_count < WORKER_COUNT:
         print(main)
         print('\n'+current_player['name'])
-        placement = iv.InputWorkerPlace(main, current_player)
-        #main.add_worker(current_player, placement[0], placement[1])
+        # iv will grab input and modify the board
+        iv.InputWorkerPlace(main, current_player)
         utils.ClearScreen()
         work_count +=1
     players_placed += 1
@@ -40,8 +36,11 @@ print(main)
 
 while no_winner:
     # TODO move workers and build testing
-    players_turn += 1
-    current_player = PLAYER_LIST[players_turn%player_count]
+    # Advance Player Turn
+    player_turn += 1
+    current_player = PLAYER_LIST[player_turn%player_count]
+    print(f"{current_player['name']} turn")
+    
 
 # Setup
 # 1) Select Number of Players
