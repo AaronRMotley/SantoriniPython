@@ -3,10 +3,11 @@ import Board as bd
 import InputVerification as iv
 import utils
 
-PLAYER1 = {'color':'R','number':1,'name':'Player 1','team':1,'god':''}
-PLAYER2 = {'color':'B','number':2,'name':'Player 2','team':2,'god':''}
-PLAYER3 = {'color':'G','number':3,'name':'Player 3','team':1,'god':''}
-PLAYER4 = {'color':'Y','number':4,'name':'Player 4','team':2,'god':''}
+PLAYER1 = {'color':'R','number':1,'name':'Player 1','team':1,'god':'','fullcolor':'Red'}
+PLAYER2 = {'color':'B','number':2,'name':'Player 2','team':2,'god':'','fullcolor':'Blue'}
+PLAYER3 = {'color':'G','number':3,'name':'Player 3','team':1,'god':'','fullcolor':'Green'}
+#Player 4 only in team game version
+PLAYER4 = {'color':'B','number':4,'name':'Player 4','team':2,'god':'','fullcolor':'Blue'}
 PLAYER_LIST = [PLAYER1, PLAYER2, PLAYER3, PLAYER4]
 WORKER_COUNT = 2
 
@@ -28,7 +29,11 @@ no_winner, turn = True, 0
 
 # 2 and 3 player games are solo, but 4 player games have 2 teams
 player_count = iv.InputPlayerCount()
+if player_count == 4:
+    PLAYER3 = {'color':'R','number':3,'name':'Player 3','team':1,'god':'','fullcolor':'Red'}
+    PLAYER_LIST[2] = PLAYER3
 main = bd.BoardManager()
+# print(PLAYER_LIST[:player_count])
 
 # GAME SETUP
 # Each player (in order) plays their 2 piececs on the board, then the next player,
@@ -39,7 +44,7 @@ while players_placed < player_count:
     work_count = 0
     while work_count < WORKER_COUNT:
         print(main)
-        print('\n'+current_player['name'])
+        print('\n'+current_player['name']+' -- '+current_player['fullcolor'])
         # iv asks for input and modify the board based on input
         iv.InputWorkerPlace(main, current_player, work_count+1)
         utils.ClearScreen()
