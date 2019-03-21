@@ -14,7 +14,6 @@ def InputPlayerCount(prompt = "How many players? (2-4)"):
         except ValueError:
             print("Sorry, I didn't understand that.")
             continue
-
         if value < 2 or value > 4:
             print("Only 2-4 player game")
             continue
@@ -26,25 +25,25 @@ def InputWorkerPlace(main, current_player, worker_num, prompt = "Select an empty
     while True:
         inputs = GetRowColInputs(prompt)
         if main.add_worker(current_player, inputs[0], inputs[1], worker_num):
+            break
+        else:
             print(f'Worker already in space {inputs[0]+DISPLAY_OFFSET}{NUM_TO_STR[inputs[1]+DISPLAY_OFFSET]}')
             continue
-        else:
-            break
 
-def InputWorkerMove(main, player, prompt = "Select a worker to move: "):
+def InputWorkerMove(main, player):
     while True:
-        selected = GetRowColInputs(prompt)
-        if ( 'worker' in main.board[selected[0]][selected[1]]
-        and main.board[selected[0]][selected[1]]['worker']['player'] == player):
-            destination = GetRowColInputs("Select a location to move to: ")
-            if destination in main.valid_moves(player):
-                if main.move_worker(player, selected[0], selected[1], destination[0], destination[1]):
+        move = GetRowColInputs("Select a worker to move: ")
+        if ( 'worker' in main.board[move[0]][move[1]]
+        and main.board[move[0]][move[1]]['worker']['player'] == player):
+            move += GetRowColInputs("Select a location to move to: ")
+            if move in main.valid_moves(player):
+                if main.move_worker(player, move[0], move[1], move[2], move[3]):
                     break
                 else:
                     print("failed call to main.move_worker")
                     continue
             else:
-                print(f"{destination[0]}{NUM_TO_STR[destination[1]]} is not a valid destination")
+                print(f"{move[2]+1}{NUM_TO_STR[move[3]]} is not a valid destination")
         else: 
             print(f"Not a valid worker for {player['name']}")
             continue
@@ -53,18 +52,17 @@ def GetRowColInputs(prompt, fail_message = "Input is not valid. Input Row and Co
     while True:
         try:
             inputs = list(input(prompt))
-            if len(inputs) <= 1:
+            if len(inputs) <= 1 or len(inputs) > 2:
                 print(fail_message)
                 continue
             inputs[0] = str(inputs[0])
             inputs[1] = str(inputs[1])
-            if not inputs[0] in INPUTS or not inputs[1] in INPUTS or not len(inputs) <= 2:
+            if not inputs[0] in INPUTS or not inputs[1] in INPUTS:
                 print(fail_message)
                 continue
             else:
                 inputs[0], inputs[1] = STR_TO_NUM[inputs[0]]-DISPLAY_OFFSET, STR_TO_NUM[inputs[1]]-DISPLAY_OFFSET
                 break
-
         except ValueError:
             print(fail_message)
             continue

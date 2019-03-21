@@ -2,6 +2,7 @@
 import Board as bd
 import InputVerification as iv
 import utils
+import tkinter as tk
 
 PLAYER1 = {'color':'R','number':1,'name':'Player 1','team':1,'god':'','fullcolor':'Red'}
 PLAYER2 = {'color':'B','number':2,'name':'Player 2','team':2,'god':'','fullcolor':'Blue'}
@@ -62,10 +63,10 @@ while no_winner:
     print(f'valid moves:{main.valid_moves(current_player)}')
     print(f'valid moves pretty: {main.valid_moves_pretty_print(main.valid_moves(current_player))}')
     iv.InputWorkerMove(main, current_player)
+    iv.InputBuild()
     # Advance Player Turn
     turn += 1
     current_player = PLAYER_LIST[turn%player_count]
-    if turn > 6:
-        no_winner = False
+    main.end_turn(current_player)
     
 

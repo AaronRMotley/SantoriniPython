@@ -17,7 +17,7 @@ class BoardManager:
 
     def add_worker(self, player, row, column, number):
         if 'worker' not in self.board[row][column]:
-            self.board[row][column]['worker'] = player
+            self.board[row][column]['worker'] = {'moved':False,'ascended':False,'number':number,'player':player}
             return True
         else:
             return False
@@ -31,16 +31,17 @@ class BoardManager:
             col = 0
             for c in r:
                 if 'worker' in c:
-                    if c['worker']['player']['name'] == player['name'] or (c['worker']['player']['team'] == player['team'] and self.player_count == 4):
+                    if c['worker']['player'] == player or (c['worker']['player']['team'] == player['team'] and self.player_count == 4):
                         for dest_row in range(row-1, row+2):
                             for dest_col in range(col-1, col+2):
-                                if ( dest_row < BOARD_SIZE and dest_col < BOARD_SIZE 
-                                and dest_row >= 0 and dest_col >= 0 
+                                if ( 
+                                dest_row < BOARD_SIZE and dest_row >= 0 and dest_col < BOARD_SIZE and dest_col >= 0 
+                                and not 'worker' in self.board[dest_row][dest_col]
                                 and self.board[dest_row][dest_col]['dome'] != True 
                                 # must not go up more than 1 level but can drop down to ground always
                                 and self.board[dest_row][dest_col]['level']-1 <= self.board[row][col]['level'] 
-                                and not 'worker' in self.board[dest_row][dest_col] ):
-                                    valid_moves.append([dest_row, dest_col, row, col])
+                                ):
+                                    valid_moves.append([row, col, dest_row, dest_col])
                 col += 1
             row += 1
         return valid_moves
@@ -48,19 +49,19 @@ class BoardManager:
     def valid_moves_pretty_print(self, valid_moves):
         if not valid_moves:
             return ''
-        NUM_TO_STR = {1:'A',2:'B',3:'C',4:'D',5:'E'}
+        NUM_TO_STR = {0:'A',1:'B',2:'C',3:'D',4:'E'}
         pretty_str = ''
         for x in valid_moves[:-1]:
-            pretty_str += str(x[2]) + str(NUM_TO_STR[x[3]]) + '->' + str(x[0]) + str(NUM_TO_STR[x[1]]) + ', '
+            pretty_str += str(x[0]+1) + str(NUM_TO_STR[x[1]]) + '->' + str(x[2]+1) + str(NUM_TO_STR[x[3]]) + ', '
         else:
-            pretty_str += str(valid_moves[-1][2]) + str(NUM_TO_STR[valid_moves[-1][3]]) + '->' + \
-                str(valid_moves[-1][0]) + str(NUM_TO_STR[valid_moves[-1][1]])
+            pretty_str += str(valid_moves[-1][0]+1) + str(NUM_TO_STR[valid_moves[-1][1]]) + '->' + \
+                str(valid_moves[-1][2]+1) + str(NUM_TO_STR[valid_moves[-1][3]])
         return pretty_str
 
     # Receive Row and Col inputs values 1-5, translation to list 0-4 is done here
     def move_worker(self, player, old_row, old_col, new_row, new_col):
         if ( 'worker' in self.board[old_row][old_col] and 'worker' not in self.board[new_row][new_col] 
-              and player == self.board[old_row-1][old_col-1]['worker']['player'] ):
+              and player == self.board[old_row][old_col]['worker']['player'] ):
             self.board[new_row][new_col]['worker'] = self.board[old_row][old_col]['worker']
             del(self.board[old_row][old_col]['worker'])
             return True
@@ -74,16 +75,20 @@ class BoardManager:
             col = 0
             for c in r:
                 if 'worker' in c:
-                    if c['worker']['moved'] == True \
-                    and (c['worker']['player']['name'] == player['name'] \
-                    or (c['worker']['player']['team'] == player['team'] and self.player_count == 4)):
+                    if (
+                    c['worker']['moved'] == True 
+                    and ( c['worker']['player']['name'] == player['name'] 
+                    or (c['worker']['player']['team'] == player['team'] and self.player_count == 4) )
+                    ):
                         for dest_row in range(row-1, row+2):
                             for dest_col in range(col-1, col+2):
-                                if dest_row < BOARD_SIZE and dest_col < BOARD_SIZE \
-                                and dest_row >= 0 and dest_col >= 0 \
-                                and self.board[dest_row][dest_col]['dome'] != True \
-                                and not (row == dest_row and col == dest_col):
-                                    valid_builds.append((dest_row, dest_col))
+                                if (
+                                dest_row < BOARD_SIZE and dest_col < BOARD_SIZE 
+                                and dest_row >= 0 and dest_col >= 0 
+                                and self.board[dest_row][dest_col]['dome'] != True 
+                                and not (row == dest_row and col == dest_col
+                                ):
+                                    valid_builds.append([dest_row, dest_col])
                 col += 1
             row += 1
         return valid_builds
@@ -110,4 +115,10 @@ class BoardManager:
             row += 1
         return s+'\n'
 
-    
+    def end_turn(self, next_player):
+        for x in self.board:
+            for y in x:
+                if 'worker' in y:
+                    y['worker']['moved'] = False
+                    if y['worker']['player'] == next_player:
+                        y['worker']['ascended'] = False
