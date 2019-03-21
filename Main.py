@@ -63,7 +63,7 @@ while no_winner:
     print(f'valid moves:{main.valid_moves(current_player)}')
     print(f'valid moves pretty: {main.valid_moves_pretty_print(main.valid_moves(current_player))}')
     iv.InputWorkerMove(main, current_player)
-    iv.InputBuild()
+    # TODO BUILD
     # Advance Player Turn
     turn += 1
     current_player = PLAYER_LIST[turn%player_count]

@@ -86,7 +86,7 @@ class BoardManager:
                                 dest_row < BOARD_SIZE and dest_col < BOARD_SIZE 
                                 and dest_row >= 0 and dest_col >= 0 
                                 and self.board[dest_row][dest_col]['dome'] != True 
-                                and not (row == dest_row and col == dest_col
+                                and not (row == dest_row and col == dest_col)
                                 ):
                                     valid_builds.append([dest_row, dest_col])
                 col += 1
