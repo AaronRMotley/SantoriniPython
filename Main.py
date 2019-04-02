@@ -60,8 +60,8 @@ while no_winner:
     print(main)
     print(f"{current_player['name']} turn")
     # TODO move workers and build testing
-    print(f'valid moves:{main.valid_moves(current_player)}')
-    print(f'valid moves pretty: {main.valid_moves_pretty_print(main.valid_moves(current_player))}')
+    # print(f'valid moves:{main.valid_moves(current_player)}')
+    print(f'valid moves:\n {main.valid_moves_pretty_print(main.valid_moves(current_player))}')
     iv.InputWorkerMove(main, current_player)
     # TODO BUILD
     # Advance Player Turn

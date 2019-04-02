@@ -1,3 +1,6 @@
+from operator import itemgetter
+from itertools import groupby
+
 # BoardPieces Statics
 BOARD_SIZE = 5
 LEVEL_ONE, LEVEL_TWO, LEVEL_THREE, DOMES = 22, 18, 14, 18
@@ -22,16 +25,31 @@ class BoardManager:
         else:
             return False
 
-    # Valid Moves returns a list containg [Dest_row, Dest_col, Origin_row, Origin_col] with numbers formatted
-    # for board rows and columns with values between 1 and 5
-    def valid_moves(self, player):
-        valid_moves = []
+    def player_pieces(self, player):
+        playerpieces = []
         row = 0
         for r in self.board:
             col = 0
             for c in r:
                 if 'worker' in c:
                     if c['worker']['player'] == player or (c['worker']['player']['team'] == player['team'] and self.player_count == 4):
+                        playerpieces.append([row, col])
+                col += 1
+            row += 1
+        return playerpieces
+
+
+    # Valid Moves returns a list containg [Dest_row, Dest_col, Origin_row, Origin_col] with numbers formatted
+    # for board rows and columns with values between 1 and 5
+    def valid_moves(self, player):
+        playerpieces = self.player_pieces(player)
+        valid_moves = []
+        row = 0
+        for r in self.board:
+            col = 0
+            for c in r:
+                if 'worker' in c:
+                    if [row, col] in playerpieces:
                         for dest_row in range(row-1, row+2):
                             for dest_col in range(col-1, col+2):
                                 if ( 
@@ -51,44 +69,52 @@ class BoardManager:
             return ''
         NUM_TO_STR = {0:'A',1:'B',2:'C',3:'D',4:'E'}
         pretty_str = ''
-        for x in valid_moves[:-1]:
-            pretty_str += str(x[0]+1) + str(NUM_TO_STR[x[1]]) + '->' + str(x[2]+1) + str(NUM_TO_STR[x[3]]) + ', '
-        else:
-            pretty_str += str(valid_moves[-1][0]+1) + str(NUM_TO_STR[valid_moves[-1][1]]) + '->' + \
-                str(valid_moves[-1][2]+1) + str(NUM_TO_STR[valid_moves[-1][3]])
+        valid_moves = sorted(valid_moves, key=itemgetter(0,1))
+        grouped_moves = groupby(valid_moves, itemgetter(0,1))
+        for x in grouped_moves:
+            pretty_str += str(x[0][0]+1) + str(NUM_TO_STR[x[0][1]]) + ' -> '
+            for y in x[1]:
+                pretty_str += str(y[2]+1) + str(NUM_TO_STR[y[3]]) + ','
+            else:
+                pretty_str = pretty_str[:-1]
+                pretty_str += '\n'
+        print(pretty_str)
+#        pretty_str = ''
+#        for x in valid_moves[:-1]:
+#            pretty_str += str(x[0]+1) + str(NUM_TO_STR[x[1]]) + ' -> ' + str(x[2]+1) + str(NUM_TO_STR[x[3]]) + ', '
+#        else:
+#            pretty_str += str(valid_moves[-1][0]+1) + str(NUM_TO_STR[valid_moves[-1][1]]) + '->' + \
+#                str(valid_moves[-1][2]+1) + str(NUM_TO_STR[valid_moves[-1][3]])
         return pretty_str
 
     # Receive Row and Col inputs values 1-5, translation to list 0-4 is done here
-    def move_worker(self, player, old_row, old_col, new_row, new_col):
-        if ( 'worker' in self.board[old_row][old_col] and 'worker' not in self.board[new_row][new_col] 
-              and player == self.board[old_row][old_col]['worker']['player'] ):
-            self.board[new_row][new_col]['worker'] = self.board[old_row][old_col]['worker']
-            del(self.board[old_row][old_col]['worker'])
+    def move_worker(self, player, move, valid_moves = []):
+        if not valid_moves:
+            valid_moves = self.valid_moves(player)
+        if move in valid_moves and len(move) == 4:
+            self.board[move[2]][move[3]]['worker'] = self.board[move[0]][move[1]]['worker']
+            del(self.board[move[0]][move[1]]['worker'])
             return True
         else: 
             return False
 
     def valid_builds(self, player):
         valid_builds = []
+        playerpieces = self.player_pieces(player)
         row = 0
         for r in self.board:
             col = 0
             for c in r:
-                if 'worker' in c:
-                    if (
-                    c['worker']['moved'] == True 
-                    and ( c['worker']['player']['name'] == player['name'] 
-                    or (c['worker']['player']['team'] == player['team'] and self.player_count == 4) )
-                    ):
-                        for dest_row in range(row-1, row+2):
-                            for dest_col in range(col-1, col+2):
-                                if (
-                                dest_row < BOARD_SIZE and dest_col < BOARD_SIZE 
-                                and dest_row >= 0 and dest_col >= 0 
-                                and self.board[dest_row][dest_col]['dome'] != True 
-                                and not (row == dest_row and col == dest_col)
-                                ):
-                                    valid_builds.append([dest_row, dest_col])
+                if ( [row, col] in playerpieces and c['worker']['moved'] == True ):
+                    for dest_row in range(row-1, row+2):
+                        for dest_col in range(col-1, col+2):
+                            if (
+                            dest_row < BOARD_SIZE and dest_col < BOARD_SIZE 
+                            and dest_row >= 0 and dest_col >= 0 
+                            and self.board[dest_row][dest_col]['dome'] != True 
+                            and not (row == dest_row and col == dest_col)
+                            ):
+                                valid_builds.append([dest_row, dest_col])
                 col += 1
             row += 1
         return valid_builds

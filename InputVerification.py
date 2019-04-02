@@ -1,5 +1,6 @@
 import Board as bd
 from os import system, name 
+import utils
 
 # Game board is fixed length of 5 spaces wide and long
 INPUTS = ['A','a','B','b','C','c','D','d','E','e','1','2','3','4','5']
@@ -32,21 +33,34 @@ def InputWorkerPlace(main, current_player, worker_num, prompt = "Select an empty
 
 def InputWorkerMove(main, player):
     while True:
-        move = GetRowColInputs("Select a worker to move: ")
-        if ( 'worker' in main.board[move[0]][move[1]]
-        and main.board[move[0]][move[1]]['worker']['player'] == player):
+        valid_moves = main.valid_moves(player)
+        move = GetRowColInputs("Select a worker to move: ") 
+        if move in main.player_pieces(player):
             move += GetRowColInputs("Select a location to move to: ")
-            if move in main.valid_moves(player):
-                if main.move_worker(player, move[0], move[1], move[2], move[3]):
+            print(move)
+            print(valid_moves)
+            if move in valid_moves:    
+                if main.move_worker(player, move, valid_moves=valid_moves):
                     break
                 else:
                     print("failed call to main.move_worker")
                     continue
+            else: 
+                printmove = [x+1 for x in move]
+                print(f"Not a valid move {printmove}")
+                continue
+        else:
+            printmove = [x+1 for x in move]
+            if 'worker' in main.board[move[0]][move[1]]:
+                print(f"Not your worker at {printmove}")
             else:
-                print(f"{move[2]+1}{NUM_TO_STR[move[3]]} is not a valid destination")
-        else: 
-            print(f"Not a valid worker for {player['name']}")
-            continue
+                print(f"No worker at {printmove}")
+
+def InputBuild(main, player):
+    while True: 
+        valid_builds = main.valid_builds(main, player)
+        
+
 
 def GetRowColInputs(prompt, fail_message = "Input is not valid. Input Row and Column. Example Valid inputs: 2c"):
     while True:
