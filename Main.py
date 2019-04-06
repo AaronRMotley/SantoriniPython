@@ -53,20 +53,25 @@ while players_placed < player_count:
     players_placed += 1
 print(main)
 
-# START GAME
+# START GAME BASIC Terminal based
 current_player = PLAYER1
 while no_winner:
     utils.ClearScreen()
     print(main)
-    print(f"{current_player['name']} turn")
+    print(f"{current_player['name']} ({current_player['fullcolor']}) turn")
     # TODO move workers and build testing
-    # print(f'valid moves:{main.valid_moves(current_player)}')
-    print(f'valid moves:\n {main.valid_moves_pretty_print(main.valid_moves(current_player))}')
-    iv.InputWorkerMove(main, current_player)
-    # TODO BUILD
+    valid_moves = main.valid_moves(current_player)
+    print(f'valid moves:\n{main.valid_moves_pretty_print(valid_moves)}')
+    move = iv.InputWorkerMove(main, current_player, valid_moves=valid_moves)
+    if main.check_winner(current_player):
+        print(f"{current_player['name']} WINS")
+        break
+    utils.ClearScreen()
+    print(main)
+    valid_builds = main.valid_builds(current_player)
+    print(f"valid build:{valid_builds}")
+    build = iv.InputBuild(main, current_player, last_move=move, valid_builds=valid_builds)
     # Advance Player Turn
     turn += 1
     current_player = PLAYER_LIST[turn%player_count]
     main.end_turn(current_player)
-    
-

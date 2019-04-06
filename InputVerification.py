@@ -31,14 +31,16 @@ def InputWorkerPlace(main, current_player, worker_num, prompt = "Select an empty
             print(f'Worker already in space {inputs[0]+DISPLAY_OFFSET}{NUM_TO_STR[inputs[1]+DISPLAY_OFFSET]}')
             continue
 
-def InputWorkerMove(main, player):
+def InputWorkerMove(main, player, valid_moves=[]):
+    move = []
     while True:
-        valid_moves = main.valid_moves(player)
+        if not valid_moves:
+            valid_moves = main.valid_moves(player)
         move = GetRowColInputs("Select a worker to move: ") 
         if move in main.player_pieces(player):
             move += GetRowColInputs("Select a location to move to: ")
-            print(move)
-            print(valid_moves)
+            # print(move)
+            # print(valid_moves)
             if move in valid_moves:    
                 if main.move_worker(player, move, valid_moves=valid_moves):
                     break
@@ -55,12 +57,23 @@ def InputWorkerMove(main, player):
                 print(f"Not your worker at {printmove}")
             else:
                 print(f"No worker at {printmove}")
+    return move
 
-def InputBuild(main, player):
-    while True: 
-        valid_builds = main.valid_builds(main, player)
-        
-
+def InputBuild(main, player, last_move=[], valid_builds=[]):
+    build = []
+    printable_last_move = ''
+    if last_move and len(last_move) == 4:
+        printable_last_move = ' ' + str(last_move[0]+1) + NUM_TO_STR[last_move[1]+1]
+    if not valid_builds:
+        valid_builds = main.valid_builds(player)
+    while True:
+        build = GetRowColInputs(f"Select a space to build next to moved worker{printable_last_move}: ")
+        if main.build(player, build[0], build[1], valid_builds):
+            break
+        else:
+            print(f"not a valid build spot {build[0]+1} {NUM_TO_STR[build[1]+1]}")
+            continue
+    return build
 
 def GetRowColInputs(prompt, fail_message = "Input is not valid. Input Row and Column. Example Valid inputs: 2c"):
     while True:

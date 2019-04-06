@@ -52,6 +52,7 @@ class BoardManager:
                     if [row, col] in playerpieces:
                         for dest_row in range(row-1, row+2):
                             for dest_col in range(col-1, col+2):
+                                # Basic move without God attributes
                                 if ( 
                                 dest_row < BOARD_SIZE and dest_row >= 0 and dest_col < BOARD_SIZE and dest_col >= 0 
                                 and not 'worker' in self.board[dest_row][dest_col]
@@ -78,22 +79,18 @@ class BoardManager:
             else:
                 pretty_str = pretty_str[:-1]
                 pretty_str += '\n'
-        print(pretty_str)
-#        pretty_str = ''
-#        for x in valid_moves[:-1]:
-#            pretty_str += str(x[0]+1) + str(NUM_TO_STR[x[1]]) + ' -> ' + str(x[2]+1) + str(NUM_TO_STR[x[3]]) + ', '
-#        else:
-#            pretty_str += str(valid_moves[-1][0]+1) + str(NUM_TO_STR[valid_moves[-1][1]]) + '->' + \
-#                str(valid_moves[-1][2]+1) + str(NUM_TO_STR[valid_moves[-1][3]])
         return pretty_str
 
-    # Receive Row and Col inputs values 1-5, translation to list 0-4 is done here
     def move_worker(self, player, move, valid_moves = []):
         if not valid_moves:
             valid_moves = self.valid_moves(player)
         if move in valid_moves and len(move) == 4:
             self.board[move[2]][move[3]]['worker'] = self.board[move[0]][move[1]]['worker']
             del(self.board[move[0]][move[1]]['worker'])
+            self.board[move[2]][move[3]]['worker']['moved'] = True
+            # if moved up a level: ascended == True
+            if self.board[move[0]][move[1]]['level'] < self.board[move[2]][move[3]]['level']:
+                self.board[move[2]][move[3]]['worker']['ascended'] = True
             return True
         else: 
             return False
@@ -108,23 +105,32 @@ class BoardManager:
                 if ( [row, col] in playerpieces and c['worker']['moved'] == True ):
                     for dest_row in range(row-1, row+2):
                         for dest_col in range(col-1, col+2):
+                            # Normal build with no God attributes
                             if (
                             dest_row < BOARD_SIZE and dest_col < BOARD_SIZE 
                             and dest_row >= 0 and dest_col >= 0 
                             and self.board[dest_row][dest_col]['dome'] != True 
+                            and self.board[dest_row][dest_col]['level'] < 4
+                            and self.board[dest_row][dest_col]['level'] >= 0
                             and not (row == dest_row and col == dest_col)
+                            and not 'worker' in self.board[dest_row][dest_col]
                             ):
                                 valid_builds.append([dest_row, dest_col])
                 col += 1
             row += 1
         return valid_builds
 
-    def build(self, row, col):
-        if self.board[row][col]['level'] < 4:
+    def build(self, player, row, col, valid_builds= []):
+        if not valid_builds:
+            valid_builds = self.valid_builds(player)
+        if [row, col] in valid_builds:
             self.board[row][col]['level'] += 1
-        if self.board[row][col]['level'] >= 4:
-            self.board[row][col]['dome'] = True
-
+            if self.board[row][col]['level'] >= 4:
+                self.board[row][col]['dome'] = True
+            return True
+        else: # Not a valid build or problem with levels
+            return False
+        
     def __str__(self):
         row, s = 1, (" "*(PRINT_SPACING+1)).join(HEADER)
         for r in self.board:
@@ -141,10 +147,21 @@ class BoardManager:
             row += 1
         return s+'\n'
 
-    def end_turn(self, next_player):
-        for x in self.board:
-            for y in x:
-                if 'worker' in y:
-                    y['worker']['moved'] = False
-                    if y['worker']['player'] == next_player:
-                        y['worker']['ascended'] = False
+    def end_turn(self, next_player, player_count=2):
+        for r in self.board:
+            for c in r:
+                if 'worker' in c:
+                    c['worker']['moved'] = False
+                    if c['worker']['player'] == next_player:
+                        c['worker']['ascended'] = False
+
+    def check_winner(self, player):
+        for r in self.board:
+            for c in r:
+                if 'worker' in c:
+                    if c['level'] == 3:
+                        return True
+                    #Or special God Win
+        else:
+            return False
+
