@@ -28,17 +28,23 @@ no_winner, turn = True, 0
 # 5) Next player's turn
 # ---------------------------------------------------------------------------------------------
 
-# 2 and 3 player games are solo, but 4 player games have 2 teams
-player_count = iv.InputPlayerCount()
-if player_count == 4:
-    PLAYER3 = {'color':'R','number':3,'name':'Player 3','team':1,'god':'','fullcolor':'Red'}
-    PLAYER_LIST[2] = PLAYER3
-main = bd.BoardManager()
-# print(PLAYER_LIST[:player_count])
 
-# GAME SETUP
-# Each player (in order) plays their 2 piececs on the board, then the next player,
-# until all players have placed their 2 workers
+def getPlayerCount(gameboard = True):
+    """gameboard =  True for GUI, False for text"""
+    if gameboard == True:
+        #TODO make tkinter message
+        pass
+    else:
+        count = iv.InputPlayerCount()
+    if count == 4:
+        PLAYER_LIST[2] = {'color':'R','number':3,'name':'Player 3','team':1,'god':'','fullcolor':'Red'}
+    return count
+    
+
+main = bd.BoardManager()
+player_count = getPlayerCount()
+
+
 players_placed = 0
 while players_placed < player_count:
     current_player = PLAYER_LIST[players_placed]
@@ -59,7 +65,6 @@ while no_winner:
     utils.ClearScreen()
     print(main)
     print(f"{current_player['name']} ({current_player['fullcolor']}) turn")
-    # TODO move workers and build testing
     valid_moves = main.valid_moves(current_player)
     print(f'valid moves:\n{main.valid_moves_pretty_print(valid_moves)}')
     move = iv.InputWorkerMove(main, current_player, valid_moves=valid_moves)
