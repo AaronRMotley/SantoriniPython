@@ -28,17 +28,24 @@ class BoardManager:
         self.team, self.team_mod, self.player_count, self.enable_gods = team, team_mod, player_count, enable_gods
         self.worker_max = worker_max
         self.gui_enable = gui_enable
-        self.board = [[{'level': 0, 'dome': False, 'perimeter': False} for x in range(board_size)] for y in
+        self.board = [[{'level': 0, 'dome': False} for x in range(board_size)] for y in
                       range(board_size)]
-        self.board_rework = [{'row': row, 'col': col, 'level': 0, 'dome': False, 'perimeter': False}
+        self.board_rework = [{'row': row, 'col': col, 'level': 0, 'dome': False}
                              for row in range(board_size) for col in range(board_size)]
         for row_tuple in enumerate(self.board):
             for col_tuple in enumerate(self.board):
                 if row_tuple[0] == 0 or row_tuple[0] == board_size - 1 \
                         or col_tuple[0] == 0 or col_tuple[0] == self.board_size - 1:
                     self.board[row_tuple[0]][col_tuple[0]]['perimeter'] = True
+                else:
+                    self.board[row_tuple[0]][col_tuple[0]]['perimeter'] = False
 
     def add_worker(self, player):
+        """
+
+        :param player:
+        :return:
+        """
         number = len(self.player_pieces(player['id'])) + 1
         while True:
             row, col = self.input_to_coordinate(prompt="Select an empty row and column to place a worker: ")
@@ -49,13 +56,11 @@ class BoardManager:
                 print(f'Worker already in space {row + 1},{col + 1}')
                 continue
 
-
-
     def player_pieces(self, player_id):
-        """given the player['id'] of a player
-        return a list of board coordinates where that players workers are located
+        """
 
-        In Team games return all team members pieces as well
+        :param player_id:
+        :return:
         """
         pieces = []
         for row_index, row in enumerate(self.board):
@@ -92,6 +97,12 @@ class BoardManager:
         return moves
 
     def move_worker(self, player_id, approved_moves=None):
+        """
+
+        :param player_id:
+        :param approved_moves:
+        :return:
+        """
         if not approved_moves:
             approved_moves = self.valid_moves(player_id)
         while True:
@@ -148,6 +159,12 @@ class BoardManager:
         return builds
 
     def build(self, player_id, approved_builds=None):
+        """
+
+        :param player_id:
+        :param approved_builds:
+        :return:
+        """
         if not approved_builds:
             approved_builds = self.valid_builds(player_id)
         while True:
@@ -360,7 +377,7 @@ if __name__ == "__main__":
             turn += 1
             current_player = player_list[turn % players_in_game]
             main.end_turn(current_player)
-    except Exception as e:
-        print(e)
+    except Exception as fail_message:
+        print(fail_message)
     finally:
         print("Bye")
